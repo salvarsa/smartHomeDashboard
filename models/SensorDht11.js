@@ -12,7 +12,7 @@ const schema = new Schema({
 });
 
 // Índice para búsquedas por fecha
-sensorSchema.index({ timestamp: -1 });
+schema.index({ timestamp: -1 });
 
 
 module.exports = model(collectionName, schema);
