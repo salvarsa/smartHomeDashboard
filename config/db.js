@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://salvarsa:pogo1234@smarthome.qo13kxm.mongodb.net/esp32_iot?retryWrites=true&w=majority';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://salvarsa:pogo1234@smarthome.qo13kxm.mongodb.net/smartHome?retryWrites=true&w=majority';
 
 const connectDB = async () => {
   try {
