@@ -1,5 +1,5 @@
 const Led = require('../models/Led.js')
-const { initMqtt, publishLedCommand, isMQTTConnected, getMQTTClient } = require('./config/mqtt.js');
+const { initMqtt, publishLedCommand, isMQTTConnected, getMQTTClient } = require('../config/mqtt.js');
 
 const getAllLeds = async (req, res) => {
     try {

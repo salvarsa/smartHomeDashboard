@@ -3,7 +3,7 @@ const collectionName = 'sensor_dht11';
 const { v4: uuidv4 } = require('uuid');
 
 const schema = new Schema({
-    _id: { type: uuidv4(), required: true },
+    _id: { type: String, default: uuidv4 },
     temperature: { type: Number, required: true },
     humidity:  { type: Number, required: true },
     device: { type: String, default: 'ESP32' },
