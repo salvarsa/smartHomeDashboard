@@ -86,15 +86,15 @@ const checkAndSaveSensorDhtData = async () => {
     }
 }
 
-const publishLedCommand = async (ledId, state) => {
+const publishLedCommand = async (ledId, status) => {
     if (!mqttClient || !mqttClient.connect){
         console.error('Cliente MQTT no conectado');
         return false;
     }
 
     const topic = `esp32/${ledId}`;
-    mqttClient.publish(topic, state);
-    console.log(`🔦 Comando LED enviado [${topic}]: ${state}`);
+    mqttClient.publish(topic, status);
+    console.log(`🔦 Comando LED enviado [${topic}]: ${status}`);
     return true
 }
 
