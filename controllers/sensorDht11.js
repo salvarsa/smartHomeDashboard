@@ -97,12 +97,12 @@ const getDailyStats = async (req, res) => {
             {
                 $group: {
                     _id: null,
-                    avgTemp: { $avg: '$temperatura' },
-                    maxTemp: { $max: '$temperatura' },
-                    minTemp: { $min: '$temperatura' },
-                    avgHum: { $avg: '$humedad' },
-                    maxHum: { $max: '$humedad' },
-                    minHum: { $min: '$humedad' },
+                    avgTemp: { $avg: '$temperature' },
+                    maxTemp: { $max: '$temperature' },
+                    minTemp: { $min: '$temperature' },
+                    avgHum: { $avg: '$humidity' },
+                    maxHum: { $max: '$humidity' },
+                    minHum: { $min: '$humidity' },
                     count: { $sum: 1 }
                 }
             }
@@ -124,9 +124,9 @@ const getDailyStats = async (req, res) => {
 
 const createSensorData = async (req, res) => {
     try {
-        const {temperatura, humedad} = req.body
+        const {temperature, humidity} = req.body
 
-        const sensorData = new SensorDHT11({ temperatura, humedad }) 
+        const sensorData = new SensorDHT11({ temperature, humidity }) 
         await SensorDHT11.save()
 
         res.status(201).json({
@@ -152,7 +152,7 @@ const deleteOldData = async (req, res) => {
 
         const result = await SensorDHT11.deleteMany({ timestamp: { $lt: cutOffDate} })
 
-        res.staus(200).json({
+        res.status(200).json({
             success: true,
             message: `Eliminados ${result.deletedCount} registros anteriores a ${days} días`,
             deletedCount: result.deletedCount

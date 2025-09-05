@@ -17,7 +17,7 @@ const getAllLeds = async (req, res) => {
 
 const getLedById = async (req, res) => {
     try {
-        const { ledId } = req.parms
+        const { ledId } = req.params
 
         const led = await Led.findOne({ ledId })
 
@@ -44,7 +44,7 @@ const getLedById = async (req, res) => {
 const controlLed = async (req, res) => {
     try {
         const { ledId } = req.params
-        const { status } = req.params
+        const { status } = req.body
 
         if (!['ON', 'OFF'].includes(status)){
             return res.status(400).json({
@@ -74,7 +74,7 @@ const controlLed = async (req, res) => {
         res.status(200).json({
             success: true,
             data: led,
-            message: `LED ${ledId} ${estado === 'ON' ? 'encendido' : 'apagado'}`
+            message: `LED ${ledId} ${status === 'ON' ? 'encendido' : 'apagado'}`
         })
     } catch (error) {
         res.status(500).json({
@@ -102,7 +102,7 @@ const toggleLed = async (req, res) => {
 
         // Publica comando MQTT
         if (isMQTTConnected()){
-            publishLedCommand(ledId, status)
+            publishLedCommand(ledId, newStatus)
         }
 
         res.status(200).json({
@@ -119,7 +119,7 @@ const toggleLed = async (req, res) => {
     }
 }
 
-const initializedLeds = async () => {
+const initializeLeds = async () => {
     try {
         const ledIds = ['led1', 'led2', 'led3']
 
@@ -128,7 +128,7 @@ const initializedLeds = async () => {
                 { ledId },
                 {
                     ledId,
-                    statutus: 'OFF',
+                    status: 'OFF',
                     lastChange: new Date()
                 },
                 { upsert: true }
@@ -145,5 +145,5 @@ module.exports = {
     getLedById,
     controlLed,
     toggleLed,
-    initializedLeds
+    initializeLeds
 }
