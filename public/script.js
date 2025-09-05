@@ -197,11 +197,10 @@ function initializeCharts() {
                 y: {
                     beginAtZero: false,
                     grid: { 
-                        color: 'rgba(184, 188, 200, 0.1)',
-                        borderColor: 'rgba(184, 188, 200, 0.2)'
+                        color: 'rgba(55, 71, 79, 0.1)',
                     },
                     ticks: { 
-                        color: '#B8BCC8',
+                        color: '#546E7A',
                         font: {
                             size: 10
                         }
@@ -209,11 +208,10 @@ function initializeCharts() {
                 },
                 x: {
                     grid: { 
-                        color: 'rgba(184, 188, 200, 0.05)',
-                        borderColor: 'rgba(184, 188, 200, 0.1)'
+                        color: 'rgba(55, 71, 79, 0.05)',
                     },
                     ticks: { 
-                        color: '#B8BCC8',
+                        color: '#546E7A',
                         font: {
                             size: 10
                         }
@@ -232,8 +230,7 @@ function initializeCharts() {
                 },
                 point: {
                     radius: 2,
-                    hoverRadius: 4,
-                    borderWidth: 1
+                    hoverRadius: 4
                 }
             },
             interaction: {
@@ -243,7 +240,7 @@ function initializeCharts() {
         }
     };
 
-    // Temperature Chart - Mitad superior
+    // Temperature Chart
     temperatureChart = new Chart(document.getElementById('temperatureChart'), {
         ...chartConfig,
         data: {
@@ -251,16 +248,14 @@ function initializeCharts() {
             datasets: [{
                 label: 'Temperatura (°C)',
                 data: [],
-                borderColor: '#FF7979',
-                backgroundColor: 'rgba(255, 121, 121, 0.1)',
-                fill: true,
-                pointBackgroundColor: '#FF7979',
-                pointBorderColor: '#ffffff'
+                borderColor: '#FFA726',
+                backgroundColor: 'rgba(255, 167, 38, 0.1)',
+                fill: true
             }]
         }
     });
 
-    // Humidity Chart - Mitad inferior
+    // Humidity Chart
     humidityChart = new Chart(document.getElementById('humidityChart'), {
         ...chartConfig,
         data: {
@@ -268,11 +263,9 @@ function initializeCharts() {
             datasets: [{
                 label: 'Humedad (%)',
                 data: [],
-                borderColor: '#6B73FF',
-                backgroundColor: 'rgba(107, 115, 255, 0.1)',
-                fill: true,
-                pointBackgroundColor: '#6B73FF',
-                pointBorderColor: '#ffffff'
+                borderColor: '#80DEEA',
+                backgroundColor: 'rgba(128, 222, 234, 0.1)',
+                fill: true
             }]
         }
     });
