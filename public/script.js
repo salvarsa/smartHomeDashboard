@@ -21,7 +21,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('startDate').value = today;
     document.getElementById('endDate').value = today;
+    
+    // Handle window resize for chart responsiveness
+    window.addEventListener('resize', handleWindowResize);
 });
+
+// ================ WINDOW RESIZE HANDLER ================
+function handleWindowResize() {
+    if (temperatureChart && humidityChart) {
+        setTimeout(() => {
+            temperatureChart.resize();
+            humidityChart.resize();
+        }, 300);
+    }
+}
 
 // ================ SOCKET.IO CONNECTION ================
 function initializeSocket() {
@@ -89,6 +102,14 @@ function initializeNavigation() {
             // Show target view
             views.forEach(view => view.classList.remove('active'));
             document.getElementById(targetView).classList.add('active');
+            
+            // Resize charts when switching to room view
+            if (targetView === 'room' && temperatureChart && humidityChart) {
+                setTimeout(() => {
+                    temperatureChart.resize();
+                    humidityChart.resize();
+                }, 100);
+            }
             
             // Load data for specific views
             if (targetView === 'history') {
@@ -165,7 +186,7 @@ function updateLedStatus(ledId, status) {
     }
 }
 
-// ================ CHARTS ================
+// ================ CHARTS MEJORADOS ================
 function initializeCharts() {
     const chartConfig = {
         type: 'line',
@@ -176,25 +197,25 @@ function initializeCharts() {
                 y: {
                     beginAtZero: false,
                     grid: { 
-                        color: 'rgba(255, 255, 255, 0.1)',
-                        borderColor: 'rgba(255, 255, 255, 0.2)'
+                        color: 'rgba(184, 188, 200, 0.1)',
+                        borderColor: 'rgba(184, 188, 200, 0.2)'
                     },
                     ticks: { 
-                        color: '#cccccc',
+                        color: '#B8BCC8',
                         font: {
-                            size: 11
+                            size: 10
                         }
                     }
                 },
                 x: {
                     grid: { 
-                        color: 'rgba(255, 255, 255, 0.05)',
-                        borderColor: 'rgba(255, 255, 255, 0.1)'
+                        color: 'rgba(184, 188, 200, 0.05)',
+                        borderColor: 'rgba(184, 188, 200, 0.1)'
                     },
                     ticks: { 
-                        color: '#cccccc',
+                        color: '#B8BCC8',
                         font: {
-                            size: 11
+                            size: 10
                         }
                     }
                 }
@@ -210,9 +231,9 @@ function initializeCharts() {
                     borderWidth: 2
                 },
                 point: {
-                    radius: 3,
-                    hoverRadius: 6,
-                    borderWidth: 2
+                    radius: 2,
+                    hoverRadius: 4,
+                    borderWidth: 1
                 }
             },
             interaction: {
@@ -222,7 +243,7 @@ function initializeCharts() {
         }
     };
 
-    // Temperature Chart
+    // Temperature Chart - Mitad superior
     temperatureChart = new Chart(document.getElementById('temperatureChart'), {
         ...chartConfig,
         data: {
@@ -230,16 +251,16 @@ function initializeCharts() {
             datasets: [{
                 label: 'Temperatura (°C)',
                 data: [],
-                borderColor: '#ff4444',
-                backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                borderColor: '#FF7979',
+                backgroundColor: 'rgba(255, 121, 121, 0.1)',
                 fill: true,
-                pointBackgroundColor: '#ff4444',
+                pointBackgroundColor: '#FF7979',
                 pointBorderColor: '#ffffff'
             }]
         }
     });
 
-    // Humidity Chart
+    // Humidity Chart - Mitad inferior
     humidityChart = new Chart(document.getElementById('humidityChart'), {
         ...chartConfig,
         data: {
@@ -247,10 +268,10 @@ function initializeCharts() {
             datasets: [{
                 label: 'Humedad (%)',
                 data: [],
-                borderColor: '#00d4ff',
-                backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                borderColor: '#6B73FF',
+                backgroundColor: 'rgba(107, 115, 255, 0.1)',
                 fill: true,
-                pointBackgroundColor: '#00d4ff',
+                pointBackgroundColor: '#6B73FF',
                 pointBorderColor: '#ffffff'
             }]
         }
@@ -275,8 +296,8 @@ function updateSensorData(data) {
             value: temperature
         });
         
-        // Keep only last 20 readings
-        if (temperatureData.length > 20) {
+        // Keep only last 15 readings for better visibility
+        if (temperatureData.length > 15) {
             temperatureData.shift();
         }
         
@@ -291,8 +312,8 @@ function updateSensorData(data) {
             value: humidity
         });
         
-        // Keep only last 20 readings
-        if (humidityData.length > 20) {
+        // Keep only last 15 readings for better visibility
+        if (humidityData.length > 15) {
             humidityData.shift();
         }
         
@@ -339,6 +360,7 @@ function loadInitialData() {
     // Setup LED controls after loading states
     setTimeout(setupLEDControls, 500);
 }
+
 
 // ================ HISTORY FUNCTIONS ================
 function loadHistoryData() {
@@ -460,13 +482,13 @@ function updateSystemStatusDisplay(data) {
     
     // MQTT status
     document.getElementById('mqttStatus').textContent = data.mqtt.connected ? 'Conectado' : 'Desconectado';
-    document.getElementById('mqttStatus').style.color = data.mqtt.connected ? '#00ff88' : '#ff4444';
+    document.getElementById('mqttStatus').style.color = data.mqtt.connected ? '#66BB6A' : '#EF5350';
     document.getElementById('mqttBroker').textContent = data.mqtt.broker || '--';
     
     // WebSocket status
     document.getElementById('wsClients').textContent = data.websocket.connectedClients || 0;
     document.getElementById('wsStatus').textContent = isConnected ? 'Conectado' : 'Desconectado';
-    document.getElementById('wsStatus').style.color = isConnected ? '#00ff88' : '#ff4444';
+    document.getElementById('wsStatus').style.color = isConnected ? '#66BB6A' : '#EF5350';
 }
 
 // ================ UTILITY FUNCTIONS ================
@@ -498,7 +520,7 @@ function showNotification(message, type = 'info') {
     
     container.appendChild(notification);
     
-    // Auto remove after 5 seconds
+    // Auto remove after 4 seconds
     setTimeout(() => {
         if (notification.parentNode) {
             notification.style.animation = 'slideOut 0.3s ease forwards';
@@ -506,7 +528,7 @@ function showNotification(message, type = 'info') {
                 container.removeChild(notification);
             }, 300);
         }
-    }, 5000);
+    }, 4000);
     
     // Add click to dismiss
     notification.addEventListener('click', () => {
