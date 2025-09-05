@@ -9,6 +9,13 @@ let socketIO = null;
 let lastTemperature = undefined;
 let lastHumidity = undefined;
 
+// valores guardados en la BD (para comparar)
+let prevTemperature = undefined;
+let prevHumidity = undefined;
+
+const TEMP_THRESHOLD = 1.0;
+const HUM_THRESHOLD = 1.5;
+
 // Inicia la comunincacion con el broker configurado en MQTT_BROKER
 const initMqtt = (io) => {
     socketIO = io
@@ -68,14 +75,34 @@ const handleMQTTMessage = async (topic, message) => {
 const checkAndSaveSensorDhtData = async () => {
     if (lastTemperature !== undefined && lastHumidity !== undefined){
         try {
-            const sensorDhtData = new SensorDHT11({
+            if (prevTemperature === undefined || prevHumidity === undefined){
+                const sensorDhtData = new SensorDHT11({
                 temperature: lastTemperature,
                 humidity: lastHumidity
-            });
+                });
 
-            await sensorDhtData.save();
-            console.log('💾 Datos del sensor guardados en BD')
+                await sensorDhtData.save();
+                console.log('💾 Datos del sensor guardados en BD')
 
+                prevTemperature = lastTemperature
+                prevHumidity = lastHumidity
+
+            } else {
+                if (Math.abs(lastTemperature - prevTemperature) >= TEMP_THRESHOLD || Math.abs(lastHumidity - prevHumidity) >= HUM_THRESHOLD){
+                    const sensorDhtData = new SensorDHT11({
+                        temperature: lastTemperature,
+                        humidity: lastHumidity
+                    });
+
+                    await sensorDhtData.save();
+                    console.log('💾 Datos del sensor guardados en BD')
+
+                     prevTemperature = lastTemperature;
+                     prevHumidity = lastHumidity;
+                 } else {
+                    console.log('⚠️ Datos no cambiaron, no se guardan en BD');
+                 }
+            }
             // Limpiar valores temporales
             lastTemperature = undefined;
             lastHumidity = undefined;
