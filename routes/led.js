@@ -4,7 +4,7 @@ const {
     getLedById,
     controlLed,
     toggleLed,
-    initializedLeds
+    initializeLeds
 } = require('../controllers/led.js')
 
 const router = express.Router()

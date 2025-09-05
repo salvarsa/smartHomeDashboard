@@ -54,8 +54,8 @@ const controlLed = async (req, res) => {
         }
 
         // actualiza / crea registros en bd
-        const led = await Led.findByIdAndUpdate(
-          {ledId},
+        const led = await Led.findOneAndUpdate(
+          {ledId: ledId},
           {
               status,
               lastChange: new Date()

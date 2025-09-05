@@ -127,7 +127,7 @@ const createSensorData = async (req, res) => {
         const {temperature, humidity} = req.body
 
         const sensorData = new SensorDHT11({ temperature, humidity }) 
-        await SensorDHT11.save()
+        await sensorData.save()
 
         res.status(201).json({
             success: true,

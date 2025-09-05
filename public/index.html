@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">🏠 SmartHome</div>
+            <nav>
+                <div class="nav-item active" data-view="room">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">Room</span>
+                </div>
+                <div class="nav-item" data-view="history">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">History</span>
+                </div>
+                <div class="nav-item" data-view="about">
+                    <span class="nav-icon">ℹ️</span>
+                    <span class="nav-text">About</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Room View -->
+            <div id="room" class="view active">
+                <!-- Header -->
+                <div class="header">
+                    <div class="client-info">
+                        <h1>ESP32 Smart Home</h1>
+                        <div class="connection-status">
+                            <span class="status-indicator" id="connectionIndicator"></span>
+                            <span id="connectionText">Conectado</span>
+                        </div>
+                    </div>
+                    <div class="system-time" id="systemTime"></div>
+                </div>
+
+                <!-- LED Cards -->
+                <div class="led-container">
+                    <div class="led-card" data-led="led1">
+                        <div class="led-header">
+                            <span class="led-name">LED 1</span>
+                            <div class="led-toggle" data-led="led1"></div>
+                        </div>
+                        <div class="led-icon off">💡</div>
+                    </div>
+                    <div class="led-card" data-led="led2">
+                        <div class="led-header">
+                            <span class="led-name">LED 2</span>
+                            <div class="led-toggle" data-led="led2"></div>
+                        </div>
+                        <div class="led-icon off">💡</div>
+                    </div>
+                    <div class="led-card" data-led="led3">
+                        <div class="led-header">
+                            <span class="led-name">LED 3</span>
+                            <div class="led-toggle" data-led="led3"></div>
+                        </div>
+                        <div class="led-icon off">💡</div>
+                    </div>
+                </div>
+
+                <!-- Sensor Dashboard -->
+                <div class="sensor-dashboard">
+                    <div class="sensor-info">
+                        <div class="sensor-reading temperature">
+                            <div class="sensor-value" id="temperatureValue">--°C</div>
+                            <div class="sensor-label">Temperatura</div>
+                        </div>
+                        <div class="sensor-reading humidity">
+                            <div class="sensor-value" id="humidityValue">--%</div>
+                            <div class="sensor-label">Humedad</div>
+                        </div>
+                    </div>
+                    <div class="charts-container">
+                        <canvas id="temperatureChart" class="chart"></canvas>
+                        <canvas id="humidityChart" class="chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History View -->
+            <div id="history" class="view">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Fecha Inicio</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="filter-group">
+                        <label>Fecha Fin</label>
+                        <input type="date" id="endDate">
+                    </div>
+                    <div class="filter-group">
+                        <label>Límite</label>
+                        <select id="limitSelect">
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="200">200</option>
+                        </select>
+                    </div>
+                    <button onclick="loadHistoryData()">Filtrar</button>
+                    <button onclick="exportData()">Exportar</button>
+                </div>
+
+                <div class="data-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha/Hora</th>
+                                <th>Temperatura (°C)</th>
+                                <th>Humedad (%)</th>
+                                <th>Dispositivo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="4" class="loading">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- About View -->
+            <div id="about" class="view">
+                <div class="system-status">
+                    <div class="status-card">
+                        <h3>Estado del Sistema</h3>
+                        <div class="status-item">
+                            <span>Estado:</span>
+                            <span id="systemStatus">Cargando...</span>
+                        </div>
+                        <div class="status-item">
+                            <span>Uptime:</span>
+                            <span id="systemUptime">--</span>
+                        </div>
+                        <div class="status-item">
+                            <span>Última actualización:</span>
+                            <span id="lastUpdate">--</span>
+                        </div>
+                    </div>
+
+                    <div class="status-card">
+                        <h3>Conexión MQTT</h3>
+                        <div class="status-item">
+                            <span>Estado:</span>
+                            <span id="mqttStatus">Cargando...</span>
+                        </div>
+                        <div class="status-item">
+                            <span>Broker:</span>
+                            <span id="mqttBroker">--</span>
+                        </div>
+                    </div>
+
+                    <div class="status-card">
+                        <h3>WebSocket</h3>
+                        <div class="status-item">
+                            <span>Clientes conectados:</span>
+                            <span id="wsClients">--</span>
+                        </div>
+                        <div class="status-item">
+                            <span>Estado de conexión:</span>
+                            <span id="wsStatus">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
